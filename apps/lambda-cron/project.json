@@ -9,7 +9,8 @@
       "options": {
         "outputPath": "dist/apps/lambda-cron",
         "main": "apps/lambda-cron/src/main.js",
-        "tsConfig": "apps/lambda-cron/tsconfig.app.json"
+        "tsConfig": "apps/lambda-cron/tsconfig.app.json",
+        "externalDependencies": "none"
       },
       "configurations": {
         "production": {

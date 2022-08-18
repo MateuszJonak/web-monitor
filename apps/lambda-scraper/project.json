@@ -9,7 +9,8 @@
       "options": {
         "outputPath": "dist/apps/lambda-scraper",
         "main": "apps/lambda-scraper/src/main.js",
-        "tsConfig": "apps/lambda-scraper/tsconfig.app.json"
+        "tsConfig": "apps/lambda-scraper/tsconfig.app.json",
+        "externalDependencies": "none"
       },
       "configurations": {
         "production": {
