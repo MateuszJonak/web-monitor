@@ -5,10 +5,16 @@ resource "random_pet" "table_name_pub_sub" {
 
 resource "aws_dynamodb_table" "pub_sub" {
   name         = random_pet.table_name_pub_sub.id
+
+  # TODO check if provisioning is better
   billing_mode = "PAY_PER_REQUEST"
 
   hash_key  = "id"
   range_key = "createdAt"
+
+  stream_enabled   = true
+  # TODO: check
+  stream_view_type = "NEW_AND_OLD_IMAGES"
 
   attribute {
     name = "id"
