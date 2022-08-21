@@ -5,6 +5,7 @@
     "frontend": "apps/frontend",
     "frontend-e2e": "apps/frontend-e2e",
     "lambda-cron": "apps/lambda-cron",
+    "lambda-headless": "apps/lambda-headless",
     "lambda-scraper": "apps/lambda-scraper"
   }
 }

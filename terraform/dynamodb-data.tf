@@ -9,10 +9,10 @@ resource "aws_dynamodb_table" "data" {
   # TODO check if provisioning is better
   billing_mode = "PAY_PER_REQUEST"
 
-  hash_key  = "id"
+  hash_key  = "link"
 
   attribute {
-    name = "id"
+    name = "link"
     type = "S"
   }
 }

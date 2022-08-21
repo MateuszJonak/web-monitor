@@ -3,14 +3,14 @@ const AWS = require('aws-sdk');
 const docClient = new AWS.DynamoDB.DocumentClient();
 const s3 = new AWS.S3({ apiVersion: '2006-03-01' });
 
-const getParams = ({ url, type, name }) => ({
+const getParams = ({ url, type, category }) => ({
   TableName: process.env.PUB_SUB_TABLE_NAME,
   Item: {
     id: nanoid(),
     createdAt: new Date().toISOString(),
     url,
     type,
-    name,
+    category,
   },
 });
 

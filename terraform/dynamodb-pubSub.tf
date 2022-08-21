@@ -13,7 +13,6 @@ resource "aws_dynamodb_table" "pub_sub" {
   range_key = "createdAt"
 
   stream_enabled   = true
-  # TODO: check
   stream_view_type = "NEW_AND_OLD_IMAGES"
 
   attribute {
