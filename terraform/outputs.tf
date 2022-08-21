@@ -12,18 +12,6 @@ output "lambda_cron_name" {
   value = aws_lambda_function.cron.function_name
 }
 
-output "lambda_scraper_bucket_name" {
-  description = "Name of the S3 bucket used to store function code."
-
-  value = aws_s3_bucket.lambda_scraper_bucket.id
-}
-
-output "lambda_scraper_name" {
-  description = "Name of the Lambda function."
-
-  value = aws_lambda_function.lambda_scraper.function_name
-}
-
 output "lambda_headless_bucket_name" {
   description = "Name of the S3 bucket used to store function code."
 
