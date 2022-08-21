@@ -3,9 +3,7 @@ const AWSXRay = require('aws-xray-sdk-core');
 const { getSitesConfig } = require('./app/sites');
 const { parser } = require('./app/parser');
 const { writeOffers } = require('./app/dynamodb');
-
-AWSXRay.captureHTTPsGlobal(require('http'));
-AWSXRay.captureHTTPsGlobal(require('https'));
+const { withPromiseTracing } = require('./app/tracing');
 
 const xRaySegment = AWSXRay.getSegment(); //returns the facade segment
 
@@ -17,10 +15,10 @@ exports.handler = async (event, context, callback) => {
   console.info('sites records:', JSON.stringify(sitesConfig));
 
   let browser = null;
-  let results = null;
+  let offers = null;
 
   try {
-    const xRayBrowserLaunch = xRaySegment.addNewSubsegment('browser launch');
+    const xRayBrowserLaunch = xRaySegment.addNewSubsegment('Browser launch');
     browser = await chromium.puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
@@ -30,29 +28,46 @@ exports.handler = async (event, context, callback) => {
     });
     xRayBrowserLaunch.close();
 
-    const xRayParser = xRaySegment.addNewSubsegment('parser');
-    results = await parser({ browser, sitesConfig });
-    xRayParser.close();
+    offers = await withPromiseTracing({
+      callback: () => parser({ browser, sitesConfig }),
+      name: 'parser',
+    });
 
-    console.info('Results:', results);
+    console.info('Offers:', offers);
 
-    const xRayDynamoDB = xRaySegment.addNewSubsegment('dynamodb write');
-    await writeOffers(results);
-    xRayDynamoDB.close();
-
-    console.info('Successfully created items!');
+    await Promise.all([
+      await withPromiseTracing({
+        callback: () =>
+          writeOffers(offers).then((results) => {
+            console.info('Successfully created items!');
+            return results;
+          }),
+        name: 'Dynamodb write',
+      }),
+      await withPromiseTracing({
+        callback: () =>
+          browser.close().catch((error) => {
+            console.info(
+              'First attempt of browser.close() ended with an error:',
+              error
+            );
+          }),
+        name: 'Browser close',
+      }),
+    ]);
   } catch (error) {
     console.error(error);
     return callback(error);
   } finally {
     if (browser !== null) {
-      const xRayBrowserClose = xRaySegment.addNewSubsegment('browser close 2');
-      await browser.close();
-      xRayBrowserClose.close();
+      await withPromiseTracing({
+        callback: () => browser.close(),
+        name: 'Finally Browser close',
+      });
 
       console.info('Browser closed!');
     }
   }
 
-  return callback(null, results);
+  return callback(null, offers);
 };
