@@ -5,14 +5,14 @@ const { parser } = require('./app/parser');
 const { writeOffers } = require('./app/dynamodb');
 const { withPromiseTracing } = require('./app/tracing');
 
-const xRaySegment = AWSXRay.getSegment(); //returns the facade segment
-
 exports.handler = async (event, context, callback) => {
+  const xRaySegment = AWSXRay.getSegment();
+
   console.log(`New event: ${JSON.stringify(event)}`);
 
   const sitesConfig = getSitesConfig(event);
 
-  console.info('sites records:', JSON.stringify(sitesConfig));
+  console.info('Sites records:', JSON.stringify(sitesConfig));
 
   let browser = null;
   let offers = null;
