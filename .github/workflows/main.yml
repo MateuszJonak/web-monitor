@@ -30,7 +30,7 @@ jobs:
     - name: NPM Install
       run: npm install
     - name: Staging Build
-      run: nx build frontend
+      run: node_modules/.bin/nx build frontend
     - name: Deploy to S3
       uses: jakejarvis/s3-sync-action@master
       with:
