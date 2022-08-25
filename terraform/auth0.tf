@@ -5,11 +5,19 @@ provider "auth0" {
 }
 
 resource "auth0_client" "web_monitor_client" {
-  name            = "Web Monitor - Frontend"
-  description     = "Web Monitor - Frontend React Application"
-  app_type        = "spa"
-  callbacks       = ["http://localhost:3000/callback"]
-  oidc_conformant = true
+  name                = "Web Monitor - Frontend"
+  description         = "Web Monitor - Frontend React Application"
+  app_type            = "spa"
+  callbacks           = ["http://localhost:4200"]
+  allowed_logout_urls = ["http://localhost:4200"]
+  web_origins         = ["http://localhost:4200"]
+  oidc_conformant     = true
+  token_endpoint_auth_method = "none"
+  grant_types = [
+    "authorization_code",
+    "implicit",
+    "refresh_token"
+  ]
 
   jwt_configuration {
     alg = "RS256"
