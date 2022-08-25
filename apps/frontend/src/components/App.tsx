@@ -1,8 +1,10 @@
 import { Header } from './Header';
 import { Auth0Provider, AppState } from '@auth0/auth0-react';
-import { Authorise } from './Authorise';
+import { Auth0Loader } from './Auth0Loader';
 import { StrictMode } from 'react';
 import { CssBaseline } from '@mui/material';
+import { AuthorizedApolloProvider } from './AuthorizedApolloProvider';
+import { Offers } from './Offers';
 
 const onRedirectCallback = (appState?: AppState) => {
   window.history.replaceState(
@@ -21,12 +23,16 @@ export const App = () => {
       redirectUri={window.location.origin}
       onRedirectCallback={onRedirectCallback}
     >
-      <StrictMode>
-        <CssBaseline />
-        <Authorise>
+      <AuthorizedApolloProvider>
+        <StrictMode>
+          <CssBaseline />
+
           <Header />
-        </Authorise>
-      </StrictMode>
+          <Auth0Loader>
+            <Offers />
+          </Auth0Loader>
+        </StrictMode>
+      </AuthorizedApolloProvider>
     </Auth0Provider>
   );
 };

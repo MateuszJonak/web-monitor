@@ -48,6 +48,7 @@
     "typescript": "~4.7.2"
   },
   "dependencies": {
+    "@apollo/client": "^3.6.9",
     "@auth0/auth0-react": "^1.10.2",
     "@emotion/react": "11.10.0",
     "@emotion/styled": "11.10.0",
@@ -55,6 +56,7 @@
     "aws-sdk": "^2.1198.0",
     "aws-xray-sdk-core": "^3.3.6",
     "core-js": "^3.6.5",
+    "graphql": "^16.6.0",
     "nanoid": "^4.0.0",
     "ramda": "^0.28.0",
     "react": "18.2.0",
