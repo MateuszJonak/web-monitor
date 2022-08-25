@@ -24,18 +24,21 @@
       "dependsOn": ["^build"]
     }
   },
-  "defaultProject": "frontend",
   "generators": {
     "@nrwl/react": {
       "application": {
+        "style": "styled-components",
+        "linter": "eslint",
         "babel": true
-      }
-    },
-    "@nrwl/next": {
-      "application": {
-        "style": "@emotion/styled",
+      },
+      "component": {
+        "style": "styled-components"
+      },
+      "library": {
+        "style": "styled-components",
         "linter": "eslint"
       }
     }
-  }
+  },
+  "defaultProject": "frontend"
 }
