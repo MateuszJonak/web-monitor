@@ -49,3 +49,7 @@ output "s3_config_bucket_name" {
 
   value       = aws_s3_bucket.config_bucket.id
 }
+
+output "appsync_api_uris" {
+  value = "${aws_appsync_graphql_api.web_monitor_appsync.uris}"
+}

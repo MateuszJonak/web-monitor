@@ -12,6 +12,11 @@ terraform {
       source  = "hashicorp/archive"
       version = "~> 2.2.0"
     }
+
+    auth0 = {
+      source  = "auth0/auth0"
+      version = ">= 0.34"
+    }
   }
 
   required_version = "~> 1.0"

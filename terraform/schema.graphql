@@ -1,0 +1,18 @@
+type Offer {
+  link: String!
+  address: String!
+  area: String!
+  category: String!
+  createdAt: String!
+  id: String!
+  perMeter: String!
+  price: String!
+}
+
+type Query {
+  offers: [Offer]!
+}
+
+schema {
+  query: Query
+}
