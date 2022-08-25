@@ -6,11 +6,15 @@ on:
   workflow_dispatch:
   
 env:
-  REACT_APP_MAIN_TEXT: "Successfully deployed in AWS"
   AWS_S3_BUCKET: ${{ secrets.AWS_BUCKET_NAME }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
+  NX_AUTH0_AUDIENCE: ${{ secrets.NX_AUTH0_AUDIENCE }}
+  NX_AUTH0_CLIENT_ID: ${{ secrets.NX_AUTH0_CLIENT_ID }}
+  NX_AUTH0_DOMAIN: ${{ secrets.NX_AUTH0_DOMAIN }}
+  NX_GRAPHQL_API_URL: ${{ secrets.NX_GRAPHQL_API_URL }}
+  
   SOURCE_DIR: "dist/apps/frontend"
 
 jobs:
