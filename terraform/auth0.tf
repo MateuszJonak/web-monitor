@@ -1,3 +1,11 @@
+locals {
+  callbacks = [
+    "http://localhost:4200",
+    "https://d3t0xld2yrzvxk.cloudfront.net/",
+    "https://web-monitor.mateuszjonak.pl/"
+  ]
+}
+
 provider "auth0" {
   domain        = var.auth0_domain
   client_id     = var.auth0_client_id
@@ -8,9 +16,9 @@ resource "auth0_client" "web_monitor_client" {
   name                = "Web Monitor - Frontend"
   description         = "Web Monitor - Frontend React Application"
   app_type            = "spa"
-  callbacks           = ["http://localhost:4200"]
-  allowed_logout_urls = ["http://localhost:4200"]
-  web_origins         = ["http://localhost:4200"]
+  callbacks           = local.callbacks
+  allowed_logout_urls = local.callbacks
+  web_origins         = local.callbacks
   oidc_conformant     = true
   token_endpoint_auth_method = "none"
   grant_types = [
