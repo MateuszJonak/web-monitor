@@ -3,14 +3,18 @@ import { gql, useQuery } from '@apollo/client';
 const GET_OFFERS = gql`
   query Offers {
     offers {
-      link
-      address
-      area
+      id
       category
       createdAt
-      id
-      perMeter
+      link
+      title
+      imageSource
+      address
       price
+      perMeter
+      roomCount
+      area
+      readed
     }
   }
 `;

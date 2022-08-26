@@ -1,12 +1,16 @@
 type Offer {
-  link: String!
-  address: String!
-  area: String!
+  id: String!
   category: String!
   createdAt: String!
-  id: String!
-  perMeter: String!
+  link: String!
+  title: String!
+  imageSource: String!
+  address: String!
   price: String!
+  perMeter: String!
+  roomCount: String!
+  area: String!
+  readed: Boolean!
 }
 
 type Query {
