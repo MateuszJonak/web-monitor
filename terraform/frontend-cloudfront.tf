@@ -1,16 +1,3 @@
-
-# generate ACM cert in virginia region for domain used by cloudfront
-resource "aws_acm_certificate" "cert" {
-  provider = aws.virginia
-  domain_name               = var.app_domain_name
-  subject_alternative_names = ["*.${var.app_domain_name}"]
-  validation_method         = "DNS"
-  tags = {
-    "Project"   = "hands-on.cloud"
-    "ManagedBy" = "Terraform"
-  }
-}
-
 locals {
   s3_origin_id = "S3-origin-frontend"
 }
@@ -102,11 +89,8 @@ resource "aws_cloudfront_distribution" "frontend_cf_distribution" {
 
   aliases = [var.app_domain_name]
 
-  # acm_certificate_arn cannot be used before certification will be confirmed
-  # revert to default certificate when acm certificate is not valid
   viewer_certificate {
-    # cloudfront_default_certificate = true
-    acm_certificate_arn = aws_acm_certificate.cert.arn
+    acm_certificate_arn = var.aws_acm_certificate_arm
     ssl_support_method  = "sni-only"
   }
 }
