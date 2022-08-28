@@ -1,4 +1,4 @@
-name: Deploy AWS
+name: Web Monitor CI
 on:
   push:
     branches:
@@ -10,49 +10,86 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ secrets.AWS_REGION }}
-  NX_AUTH0_AUDIENCE: ${{ secrets.NX_AUTH0_AUDIENCE }}
-  NX_AUTH0_CLIENT_ID: ${{ secrets.NX_AUTH0_CLIENT_ID }}
-  NX_AUTH0_DOMAIN: ${{ secrets.NX_AUTH0_DOMAIN }}
-  NX_GRAPHQL_API_URL: ${{ secrets.NX_GRAPHQL_API_URL }}
-
   SOURCE_DIR: 'dist/apps/frontend'
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_BRANCH: ${{ github.event.number || github.ref_name }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
+  main:
+    environment:
+      NX_CLOUD_DISTRIBUTED_EXECUTION: "true"
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [16.x]
-
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v2
+        name: Checkout Main branch
         with:
-          node-version: ${{ matrix.node-version }}
+          # We need to fetch all branches and commits so that Nx affected has a base to compare against.
+          fetch-depth: 0
+
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v2
+        with:
+          main-branch-name: main
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
 
       - name: Get npm cache directory
         id: npm-cache-dir
         run: |
           echo "::set-output name=dir::$(npm config get cache)"
 
-      - uses: actions/cache@v3
-        id: npm-cache # use this to check for `cache-hit` ==> if: steps.npm-cache.outputs.cache-hit != 'true'
+      - name: Use the node_modules cache if available [npm]
+        uses: actions/cache@v3
         with:
           path: ${{ steps.npm-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ steps.versions.outputs.node_version }}-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-node-
+            ${{ runner.os }}-node-${{ steps.versions.outputs.node_version }}-
 
-      - name: NPM Install
+      - name: Install dependencies
         run: npm ci
 
-      - name: Staging Build
-        run: node_modules/.bin/nx build frontend
+      - name: Initialize the Nx Cloud distributed CI run
+        run: npx nx-cloud start-ci-run
+
+      - name: Frontend Build
+        run: npx nx build frontend
+        env:
+          NX_AUTH0_AUDIENCE: https://aws.amazon.com/
+          NX_AUTH0_CLIENT_ID: p3d8LNL7XbpYJ51Ale4Yz1E9lUhvwqbX
+          NX_AUTH0_DOMAIN: web-monitor-2.eu.auth0.com
+          NX_GRAPHQL_API_URL: https://q7spqtvevvfb3j65muqxjhmaja.appsync-api.eu-central-1.amazonaws.com/graphql
+
+      - name: Stop all running agents for this CI run
+        # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
+        if: ${{ always() }}
+        run: npx nx-cloud stop-all-agents
 
       - name: Deploy to S3
         uses: jakejarvis/s3-sync-action@master
         with:
           args: --acl public-read --follow-symlinks --delete
+
+  agent:
+    steps:
+      - name: setup
+      - run:
+          name: Agent
+          command: npx nx-cloud start-agent
+
+workflows:
+  Build:
+    jobs:
+      - agent
+        name: agent1
+      - agent
+        name: agent2
+      - agent
+        name: agent3
+      - main
