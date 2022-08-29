@@ -14,10 +14,6 @@ env:
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
   NX_BRANCH: ${{ github.event.number || github.ref_name }}
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
-  cancel-in-progress: true
-
 jobs:
   main:
     runs-on: ubuntu-latest
@@ -53,9 +49,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Initialize the Nx Cloud distributed CI run
-        run: npx nx-cloud start-ci-run
-
       - name: Frontend Build
         run: npx nx build frontend
         env:
@@ -63,11 +56,6 @@ jobs:
           NX_AUTH0_CLIENT_ID: p3d8LNL7XbpYJ51Ale4Yz1E9lUhvwqbX
           NX_AUTH0_DOMAIN: web-monitor-2.eu.auth0.com
           NX_GRAPHQL_API_URL: https://q7spqtvevvfb3j65muqxjhmaja.appsync-api.eu-central-1.amazonaws.com/graphql
-
-      - name: Stop all running agents for this CI run
-        # It's important that we always run this step, otherwise in the case of any failures in preceding non-Nx steps, the agents will keep running and waste billable minutes
-        if: ${{ always() }}
-        run: npx nx-cloud stop-all-agents
 
       - name: Deploy to S3
         uses: jakejarvis/s3-sync-action@master
