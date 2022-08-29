@@ -1,26 +1,8 @@
-import { gql, useQuery } from '@apollo/client';
-
-const GET_OFFERS = gql`
-  query Offers {
-    offers {
-      id
-      category
-      createdAt
-      link
-      title
-      imageSource
-      address
-      price
-      perMeter
-      roomCount
-      area
-      readed
-    }
-  }
-`;
+import { useQuery } from '@apollo/client';
+import { OffersQueryDocument } from '../graphql/operations/offers.generated';
 
 export const Offers = () => {
-  const { data, loading, error } = useQuery(GET_OFFERS);
+  const { data, loading, error } = useQuery(OffersQueryDocument);
 
   if (error) {
     return <div>Oops... {error.message}</div>;
@@ -32,7 +14,7 @@ export const Offers = () => {
 
   return (
     <ul>
-      {data.offers.map((offer: Record<string, unknown>) => (
+      {data?.offers.map((offer) => (
         <li>{JSON.stringify(offer)}</li>
       ))}
     </ul>

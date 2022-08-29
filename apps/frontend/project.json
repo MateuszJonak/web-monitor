@@ -68,6 +68,17 @@
         "jestConfig": "apps/frontend/jest.config.ts",
         "passWithNoTests": true
       }
+    },
+    "codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config apps/frontend/codegen.yml"
+      },
+      "configurations": {
+        "watch": {
+          "command": "nx run frontend:codegen --watch"
+        }
+      }
     }
   },
   "tags": []

@@ -1,0 +1,16 @@
+query offersQuery {
+  offers {
+    id
+    category
+    createdAt
+    link
+    title
+    imageSource
+    address
+    price
+    perMeter
+    roomCount
+    area
+    readed
+  }
+}

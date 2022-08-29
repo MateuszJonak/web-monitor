@@ -1,0 +1,14 @@
+schema: terraform/schema.graphql
+documents: 'apps/frontend/src/graphql/operations/**/!(*.generated).graphql'
+generates:
+  apps/frontend/src/graphql/types.generated.tsx:
+    plugins:
+      - 'typescript'
+  apps/frontend/src/graphql/:
+    preset: near-operation-file
+    presetConfig:
+      extension: .generated.ts
+      baseTypesPath: types.generated.tsx
+    plugins:
+      - typescript-operations
+      - typed-document-node
