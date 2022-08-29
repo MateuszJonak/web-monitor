@@ -20,6 +20,7 @@
         "scripts": [],
         "webpackConfig": "@nrwl/react/plugins/webpack"
       },
+      "dependsOn": ["codegen"],
       "configurations": {
         "development": {
           "extractLicenses": false,
@@ -37,7 +38,7 @@
         }
       }
     },
-    "serve": {
+    "serve-dev": {
       "executor": "@nrwl/web:dev-server",
       "defaultConfiguration": "development",
       "options": {
@@ -51,6 +52,24 @@
         "production": {
           "buildTarget": "frontend:build:production",
           "hmr": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "nx:run-commands",
+      "defaultConfiguration": "development",
+      "configurations": {
+        "development": {
+          "commands": [
+            "nx run frontend:serve-dev:development",
+            "nx run frontend:codegen:watch"
+          ]
+        },
+        "production": {
+          "commands": [
+            "nx run frontend:serve-dev:production",
+            "nx run frontend:codegen:watch"
+          ]
         }
       }
     },
