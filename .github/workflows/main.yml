@@ -20,8 +20,6 @@ concurrency:
 
 jobs:
   main:
-    environment:
-      NX_CLOUD_DISTRIBUTED_EXECUTION: "true"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -75,21 +73,3 @@ jobs:
         uses: jakejarvis/s3-sync-action@master
         with:
           args: --acl public-read --follow-symlinks --delete
-
-  agent:
-    steps:
-      - name: setup
-      - run:
-          name: Agent
-          command: npx nx-cloud start-agent
-
-workflows:
-  Build:
-    jobs:
-      - agent
-        name: agent1
-      - agent
-        name: agent2
-      - agent
-        name: agent3
-      - main
