@@ -5,7 +5,7 @@ resource "random_pet" "appsync_api_name" {
 }
 
 data "local_file" "schema" {
-    filename = "${path.module}/schema.graphql"
+    filename = "${path.module}/graphql/schema.graphql"
 }
 
 resource "aws_appsync_graphql_api" "web_monitor_appsync" {
@@ -99,6 +99,23 @@ resource "aws_appsync_resolver" "offers_resolver" {
     "operation" : "Scan"
 }
 EOF
+
+  response_template = <<EOF
+$utils.toJson($context.result.items)
+EOF
+}
+
+data "local_file" "offers_by_category_request_template" {
+    filename = "${path.module}/graphql/offersByCategory-request.vtl"
+}
+
+resource "aws_appsync_resolver" "offers_by_category_resolver" {
+  api_id      = aws_appsync_graphql_api.web_monitor_appsync.id
+  field        = "offersByCategory"
+  type        = "Query"
+  data_source = aws_appsync_datasource.web_monitor_appsync_datasource.name
+
+  request_template = data.local_file.offers_by_category_request_template.content
 
   response_template = <<EOF
 $utils.toJson($context.result.items)

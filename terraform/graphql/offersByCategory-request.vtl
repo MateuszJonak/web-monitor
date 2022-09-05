@@ -1,0 +1,21 @@
+{
+  "version" : "2017-02-28",
+  "operation" : "Query",
+  "index" : "category-index",
+  "query" : {
+    "expression": "category = :category",
+      "expressionValues" : {
+        #set($categoryMapper = {
+          "HOUSES120": "Houses > 120",
+          "HOUSES80": "Houses 80-120"
+        })
+        #set( $categoryArgument = $context.arguments.category )
+        #if ($categoryMapper[$categoryArgument])
+          #set( $category = $categoryMapper[$categoryArgument] )
+        #else
+          #set( $category = $categoryArgument )
+        #end
+        ":category" : $util.dynamodb.toDynamoDBJson($category)
+      }
+  }
+}

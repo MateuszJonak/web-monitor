@@ -13,8 +13,14 @@ type Offer {
   readed: Boolean!
 }
 
+enum Category {
+  HOUSES120
+  HOUSES80
+}
+
 type Query {
   offers: [Offer]!
+  offersByCategory(category: Category!): [Offer]!
 }
 
 schema {

@@ -9,12 +9,23 @@ import {
   Divider,
   Link,
   Stack,
+  Tab,
+  Tabs,
   Typography,
 } from '@mui/material';
-import { OffersQueryDocument } from '../graphql/operations/offers.generated';
+import { useState } from 'react';
+import { OffersByCategoryQueryDocument } from '../graphql/operations/offers.generated';
+import { Category } from '../graphql/types.generated';
 
 export const Offers = () => {
-  const { data, loading, error } = useQuery(OffersQueryDocument);
+  const [category, setCategory] = useState(Category.Houses120);
+  const { data, loading, error } = useQuery(OffersByCategoryQueryDocument, {
+    variables: { category },
+  });
+
+  const handleChange = (event: React.SyntheticEvent, newValue: Category) => {
+    setCategory(newValue);
+  };
 
   if (error) {
     return <div>Oops... {error.message}</div>;
@@ -26,9 +37,19 @@ export const Offers = () => {
 
   return (
     <Container maxWidth="md">
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Tabs
+          value={category}
+          onChange={handleChange}
+          aria-label="basic tabs example"
+        >
+          <Tab label="Houses > 120" value={Category.Houses120} />
+          <Tab label="Houses 80 - 120" value={Category.Houses80} />
+        </Tabs>
+      </Box>
       <Box mt={2}>
         <List>
-          {data?.offers.map((offer) => (
+          {data?.offersByCategory.map((offer) => (
             <li key={offer?.id}>
               <Card sx={{ display: 'flex', minHeight: 180 }}>
                 <CardMedia

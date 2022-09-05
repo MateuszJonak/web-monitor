@@ -14,3 +14,20 @@ query offersQuery {
     readed
   }
 }
+
+query offersByCategoryQuery($category: Category!) {
+  offersByCategory(category: $category) {
+    id
+    category
+    createdAt
+    link
+    title
+    imageSource
+    address
+    price
+    perMeter
+    roomCount
+    area
+    readed
+  }
+}

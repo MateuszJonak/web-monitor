@@ -14,4 +14,21 @@ resource "aws_dynamodb_table" "data" {
     name = "link"
     type = "S"
   }
+
+  attribute {
+    name = "createdAt"
+    type = "S"
+  }
+
+  attribute {
+    name = "category"
+    type = "S"
+  }
+
+  global_secondary_index {
+    hash_key = "category"
+    range_key = "createdAt"
+    name = "category-index"
+    projection_type = "ALL"
+  }
 }
